@@ -1,5 +1,34 @@
 # Deployment Guide for Authenticator & Terminator
 
+## Quick Reference: Conductor Skill
+
+For deployment commands, the **conductor skill** (`~/.claude/skills/conductor/`) provides comprehensive guidance. Key commands:
+
+```bash
+# Deploy to staging
+ddr conductor run --target staging --branch aaa/authenticator_staging authenticator --yes
+ddr conductor run --target staging --branch aaa/terminator_staging terminator --yes
+
+# Deploy to production
+ddr conductor run --target commercial authenticator
+ddr conductor run --target commercial terminator
+
+# Check status
+ddr conductor describe authenticator --target staging
+ddr conductor describe terminator --target commercial
+
+# Rollback
+ddr conductor rollback list authenticator --target staging
+ddr conductor rollback apply authenticator --target staging --sha <sha>
+
+# Cancel deployment
+ddr conductor cancel authenticator --target staging
+```
+
+**Note**: For integration branches (devflow integrate), use the **integrate skill** instead.
+
+---
+
 ## Datadog API Access
 
 ### Production Datadog

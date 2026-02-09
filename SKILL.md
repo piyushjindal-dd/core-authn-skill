@@ -265,3 +265,69 @@ For detailed workflows, see:
 - [feature-flags.md](feature-flags.md) - Feature flag management and rollout status
 - [security.md](security.md) - Security considerations
 - [pitfalls.md](pitfalls.md) - Common mistakes to avoid
+
+## Related Skills
+
+This skill integrates with other Claude Code skills for complete workflows:
+
+### Conductor Skill (`~/.claude/skills/conductor/`)
+
+Use for **deployments, rollbacks, and release management**:
+
+```
+"Deploy authenticator to staging"
+"Rollback terminator in prod"
+"Check deployment status for obo"
+"Pause the current deployment"
+```
+
+**Key Commands:**
+```bash
+# Deploy to staging
+ddr conductor run --target staging --branch aaa/authenticator_staging authenticator --yes
+
+# Deploy to production
+ddr conductor run --target commercial authenticator
+
+# Check status
+ddr conductor describe authenticator --target staging
+
+# Rollback
+ddr conductor rollback apply authenticator --target staging --sha <sha>
+```
+
+### Fetch CI Results Skill (`~/.claude/skills/fetch-ci-results/`)
+
+Use for **CI debugging, flaky test detection, and pipeline analysis**:
+
+```
+"Check CI status for my PR"
+"Why did CI fail?"
+"Is this test flaky?"
+"Retry the failed job"
+"Get GitLab CI logs"
+```
+
+**Key Commands:**
+```bash
+# Get CI logs for a job
+~/.claude/skills/fetch-ci-results/scripts/get_ddci_logs.sh <job_id>
+
+# Query historical CI data (flaky test detection)
+~/.claude/skills/fetch-ci-results/scripts/query_ci_data.sh --test <test_name> --days 7
+
+# Retry a failed job
+~/.claude/skills/fetch-ci-results/scripts/retry_ddci_job.sh <job_id>
+```
+
+### When to Use Which Skill
+
+| Task | Skill | Example |
+|------|-------|---------|
+| Deploy changes | **conductor** | "Deploy terminator to staging" |
+| Check CI failures | **fetch-ci-results** | "Why did my PR CI fail?" |
+| Investigate incidents | **core-authn** (this skill) | "Investigate authenticator alert" |
+| Rollback deployment | **conductor** | "Rollback authenticator in prod" |
+| Detect flaky tests | **fetch-ci-results** | "Is TestJWTValidation flaky?" |
+| Create investigation notebook | **core-authn** (this skill) | "Create notebook for incident 12345" |
+| Retry CI job | **fetch-ci-results** | "Retry the failed linter job" |

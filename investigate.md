@@ -20,6 +20,35 @@ bits -p "Investigate incident for service:terminator. Find error traces, compare
 
 ---
 
+## CI Failure Investigation
+
+For CI pipeline failures, use the **fetch-ci-results skill** (`~/.claude/skills/fetch-ci-results/`).
+
+### Quick CI Investigation
+
+```bash
+# Get logs for a failed job
+~/.claude/skills/fetch-ci-results/scripts/get_ddci_logs.sh <job_id>
+
+# Check if a test is flaky
+~/.claude/skills/fetch-ci-results/scripts/query_ci_data.sh --test "TestName" --days 7
+
+# Retry a failed job (after fixing or if flaky)
+~/.claude/skills/fetch-ci-results/scripts/retry_ddci_job.sh <job_id>
+```
+
+### CI Failure Triage
+
+| Symptom | Investigation | Likely Cause |
+|---------|---------------|--------------|
+| Test failed on PR | Get job logs | Code bug or test bug |
+| Test failed intermittently | Query historical data | Flaky test |
+| Build failed | Check compilation output | Missing dependency or syntax error |
+| Timeout | Check job duration history | Slow test or infra issue |
+| Multiple jobs failed | Check if related | Shared dependency or infra issue |
+
+---
+
 ## CRITICAL: Understand the Incident FIRST, Then Create Notebook
 
 **DO NOT create a notebook with generic service health charts.** Generic charts (request counts, latency) rarely show the actual incident. Instead:

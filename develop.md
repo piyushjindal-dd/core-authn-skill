@@ -364,3 +364,76 @@ Before submitting:
 - [ ] Feature flag for gradual rollout (if risky)
 - [ ] Commit message includes Jira ticket
 - [ ] PR description explains *why* not just *what*
+
+---
+
+## CI Debugging with fetch-ci-results Skill
+
+When CI fails on your PR, use the **fetch-ci-results skill** (`~/.claude/skills/fetch-ci-results/`) for debugging.
+
+### Quick CI Commands
+
+```bash
+# Get logs for a failed GitLab CI job
+~/.claude/skills/fetch-ci-results/scripts/get_ddci_logs.sh <job_id>
+
+# Check if a test is flaky (historical data)
+~/.claude/skills/fetch-ci-results/scripts/query_ci_data.sh --test "TestJWTValidation" --days 7
+
+# Retry a failed job
+~/.claude/skills/fetch-ci-results/scripts/retry_ddci_job.sh <job_id>
+```
+
+### Common CI Failure Scenarios
+
+| Failure Type | Investigation | Resolution |
+|--------------|---------------|------------|
+| **Unit test failure** | Check test logs, run locally | Fix the test or code |
+| **Linter failure** | Check lint output | Run `gofmt`, fix issues |
+| **Race condition** | Run with `-race` locally | Add proper synchronization |
+| **Flaky test** | Query historical data | Fix flakiness or skip with reason |
+| **Build failure** | Check compilation errors | Fix imports, dependencies |
+
+### Investigating Flaky Tests
+
+```bash
+# Check if test has failed before
+~/.claude/skills/fetch-ci-results/scripts/query_ci_data.sh \
+  --test "TestAuthenticatorCache" \
+  --days 14 \
+  --repo dd-go
+
+# If flaky, check recent failures
+~/.claude/skills/fetch-ci-results/scripts/query_ci_data.sh \
+  --test "TestAuthenticatorCache" \
+  --status failed \
+  --days 7
+```
+
+### Running Tests Locally Before Push
+
+```bash
+# dd-go services - always run before push
+rake authenticator:test
+rake terminator:test
+rake authenticator-intake:test
+
+# With race detector (catches concurrency bugs)
+go test -race ./apps/authenticator/...
+go test -race ./apps/terminator/...
+
+# dd-source (obo)
+bzl test //domains/aaa_authn/apps/apis/obo/...
+```
+
+### CI Job Retry
+
+If CI fails due to infrastructure issues (not code):
+
+```bash
+# Retry a specific job
+~/.claude/skills/fetch-ci-results/scripts/retry_ddci_job.sh <job_id>
+
+# Or via gh CLI for GitHub Actions
+gh run rerun <run_id> --failed
+```
