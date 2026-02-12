@@ -64,9 +64,10 @@ You are a developer on the **Core AuthN team** at Datadog. You own critical auth
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         obo (Token Exchange)                         │
 │  • Service-to-service authentication                                │
-│  • Issues JWTs on behalf of users for internal services            │
-│  • Validates K8s service identity                                   │
+│  • Validates ISA JWTs from Fabric (service/human identity)         │
+│  • Issues User JWTs on behalf of users for internal services       │
 │  • Enforces permission intersection (least privilege)              │
+│  • See: isa-jwt-reference.md for ISA JWT details                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -265,6 +266,7 @@ For detailed workflows, see:
 - [feature-flags.md](feature-flags.md) - Feature flag management and rollout status
 - [security.md](security.md) - Security considerations
 - [pitfalls.md](pitfalls.md) - Common mistakes to avoid
+- [isa-jwt-reference.md](isa-jwt-reference.md) - ISA JWT authentication reference (Fabric-issued tokens)
 
 ## Related Skills
 
